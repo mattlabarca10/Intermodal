@@ -126,6 +126,7 @@ extension UIColor {
     }
 }
 
+
 // Preview for MapView
 struct MapView_Previews: PreviewProvider {
     static var previews: some View {

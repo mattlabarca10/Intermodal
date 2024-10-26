@@ -8,9 +8,5 @@ struct Destination {
 
 // Enum for transportation modes
 enum TransportationMode: String, CaseIterable {
-    case walk
-    case bike
-    case car
-    case train
-    case bus
+    case walk, bike, car, train, bus
 }
