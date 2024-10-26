@@ -14,53 +14,38 @@ struct FormView: View {
     @State private var isSearching: Bool = false
 
     @State private var startLocation: MKMapItem?
-    @State private var destinationLocation: MKMapItem?
-    @State private var selectingStartLocation = true
+    @State private var destinations: [Destination] = [] // Holds destination details
 
     var body: some View {
         NavigationView {
             VStack {
-                // Toggle between setting Start and Destination
-                HStack {
-                    Button(action: { selectingStartLocation = true }) {
-                        Text("Set Start Location")
-                            .padding()
-                            .background(selectingStartLocation ? Color.blue : Color.gray)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
+                // Start Location
+                locationInputView(title: "Start Location", location: $startLocation, isStart: true)
 
-                    Button(action: { selectingStartLocation = false }) {
-                        Text("Set Destination")
-                            .padding()
-                            .background(!selectingStartLocation ? Color.blue : Color.gray)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                }
-                .padding(.bottom)
-
-                // Display selected start and destination
-                if let start = startLocation {
-                    Text("Start: \(start.name ?? "Unknown Location")")
-                        .font(.subheadline)
-                        .padding(.bottom, 2)
-                }
-                if let destination = destinationLocation {
-                    Text("Destination: \(destination.name ?? "Unknown Location")")
-                        .font(.subheadline)
-                        .padding(.bottom, 2)
+                // Dynamic Destination Inputs
+                ForEach(destinations.indices, id: \.self) { index in
+                    locationInputView(title: "Destination \(index + 1)", location: $destinations[index].mapItem, transportationMode: $destinations[index].transportationMode)
                 }
 
-                // Search bar for entering location text
-                SearchBar(text: $searchText, onSearch: performSearch)
-                    .padding()
-
-                // Display progress while searching
-                if isSearching {
-                    ProgressView("Searching...")
+                // Add Destination Button
+                Button(action: addDestination) {
+                    Text("Add Destination")
                         .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
+                .padding()
+
+                // Navigation Link to MapView
+                NavigationLink(destination: MapView(startLocation: startLocation, destinations: destinations)) {
+                    Text("Generate Route")
+                        .padding()
+                        .background((startLocation != nil && !destinations.isEmpty) ? Color.green : Color.gray)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .disabled(startLocation == nil || destinations.isEmpty)
 
                 // List of search results
                 List(searchResults, id: \.self) { item in
@@ -71,20 +56,15 @@ struct FormView: View {
                             .font(.subheadline)
                     }
                     .onTapGesture {
-                        saveLocation(item)
+                        saveLocation(item) // Save selected location
                     }
                 }
 
-                // Submit Button for Navigation
-                NavigationLink(destination: MapView(startLocation: startLocation, destinationLocation: destinationLocation)) {
-                    Text("Submit")
+                // Display progress while searching
+                if isSearching {
+                    ProgressView("Searching...")
                         .padding()
-                        .background((startLocation != nil && destinationLocation != nil) ? Color.green : Color.gray)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                 }
-                .disabled(startLocation == nil || destinationLocation == nil)
-                .padding()
             }
             .navigationTitle("Location Search")
             .onChange(of: searchText) { newValue in
@@ -93,7 +73,38 @@ struct FormView: View {
         }
     }
 
-    // Search function
+    private func locationInputView(title: String, location: Binding<MKMapItem?>, isStart: Bool = false, transportationMode: Binding<TransportationMode?>? = nil) -> some View {
+        HStack {
+            Text(title)
+                .font(.headline)
+
+            // Search Bar
+            SearchBar(text: $searchText, onSearch: performSearch)
+                .frame(width: 200)
+
+            if let selectedLocation = location.wrappedValue {
+                // Display selected location in the search bar
+                Text(selectedLocation.name ?? "Unknown Location")
+                    .foregroundColor(.gray)
+            }
+
+            // Dropdown for Transportation Mode for destinations
+            if transportationMode != nil {
+                Picker("Mode", selection: transportationMode!) {
+                    ForEach(TransportationMode.allCases, id: \.self) { mode in
+                        Text(mode.rawValue.capitalized).tag(mode as TransportationMode?)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+                .frame(width: 100)
+            }
+        }
+    }
+
+    private func addDestination() {
+        destinations.append(Destination())
+    }
+
     private func performSearch() {
         guard !searchText.isEmpty else {
             searchResults = []
@@ -123,21 +134,32 @@ struct FormView: View {
         }
     }
 
-    // Save location based on the selected type (start or destination)
     private func saveLocation(_ location: MKMapItem) {
-        if selectingStartLocation {
+        if startLocation == nil {
             startLocation = location
             print("Start location set to: \(location.name ?? "Unknown")")
-        } else {
-            destinationLocation = location
-            print("Destination set to: \(location.name ?? "Unknown")")
+            searchText = "" // Clear search text after selecting
+        } else if let index = destinations.firstIndex(where: { $0.mapItem == nil }) {
+            destinations[index].mapItem = location
+            print("Destination \(index + 1) set to: \(location.name ?? "Unknown")")
+            searchText = "" // Clear search text after selecting
         }
-        searchText = ""
-        searchResults = []
+        searchResults = [] // Clear search results after selection
     }
 }
 
-// Custom SearchBar component to allow location text input and search triggering
+// Structure to hold destination information
+struct Destination {
+    var mapItem: MKMapItem? = nil
+    var transportationMode: TransportationMode? = nil
+}
+
+// Enum for transportation modes
+enum TransportationMode: String, CaseIterable {
+    case walk, bike, car, train, bus
+}
+
+// Custom SearchBar component
 struct SearchBar: UIViewRepresentable {
     @Binding var text: String
     var onSearch: () -> Void
