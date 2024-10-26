@@ -1,60 +1,47 @@
-// MapView.swift
-// Intermodal
-// Created by Matthew LaBarca on 10/26/24.
-
 import SwiftUI
 import MapKit
 
 struct MapView: UIViewRepresentable {
     var startLocation: MKMapItem?
-    var destinations: [Destination] // Updated to accept multiple destinations
+    var destinations: [Destination]
 
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
         mapView.showsUserLocation = true
         mapView.userTrackingMode = .follow
-        calculateRoutes(on: mapView) // Calculate routes when the view is created
         return mapView
     }
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        // If the locations change, recalculate the route
+        // Clear existing overlays before recalculating routes
+        uiView.removeOverlays(uiView.overlays)
+
+        // Calculate and display routes
         calculateRoutes(on: uiView)
     }
 
-    func calculateRoutes(on mapView: MKMapView) {
+    private func calculateRoutes(on mapView: MKMapView) {
         guard let start = startLocation else {
             print("Start location is missing.")
             return
         }
 
-        // Create an array to hold the MKMapItem for destinations
-        var destinationItems: [MKMapItem] = []
+        var destinationItems: [MKMapItem] = destinations.compactMap { $0.mapItem }
 
-        // Collect all valid destination map items
-        for destination in destinations {
-            if let destinationMapItem = destination.mapItem {
-                destinationItems.append(destinationMapItem)
-            }
-        }
-
-        // Ensure there are destination items to process
         guard !destinationItems.isEmpty else {
             print("No destinations to route.")
             return
         }
 
-        // Create a route from start to the first destination
-        calculateRoute(from: start, to: destinationItems[0], on: mapView) { route in
-            // Calculate the route from the first destination to subsequent destinations
+        // Calculate route from the start location to the first destination
+        calculateRoute(from: start, to: destinationItems[0], on: mapView) { _ in
             for index in 1..<destinationItems.count {
                 let previousDestination = destinationItems[index - 1]
                 let nextDestination = destinationItems[index]
 
-                calculateRoute(from: previousDestination, to: nextDestination, on: mapView) { route in
-                    // Further logic can be added here if needed
-                }
+                // Calculate route from previous to next destination
+                calculateRoute(from: previousDestination, to: nextDestination, on: mapView, completion: { _ in })
             }
         }
     }
@@ -64,7 +51,6 @@ struct MapView: UIViewRepresentable {
         request.source = source
         request.destination = destination
 
-        // Set transport type based on the first destination's transportation mode
         if let firstDestination = destinations.first, let mode = firstDestination.transportationMode {
             switch mode {
             case .walk:
@@ -93,11 +79,9 @@ struct MapView: UIViewRepresentable {
                 return
             }
 
-            // Add overlay for the route with a random color
-            let randomColor = UIColor.random() // Get a random color
+            let randomColor = UIColor.random()
             mapView.addOverlay(route.polyline, level: .aboveRoads)
 
-            // Set visible map rect with padding to zoom out a bit
             let routeRect = route.polyline.boundingMapRect
             let paddedRect = mapView.mapRectThatFits(routeRect, edgePadding: UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50))
             mapView.setVisibleMapRect(paddedRect, animated: true)
@@ -120,9 +104,8 @@ struct MapView: UIViewRepresentable {
 
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
             if let polyline = overlay as? MKPolyline {
-                // Assign a random color to each polyline
                 let renderer = MKPolylineRenderer(polyline: polyline)
-                renderer.strokeColor = UIColor.random() // Random color for the polyline
+                renderer.strokeColor = UIColor.random()
                 renderer.lineWidth = 5
                 return renderer
             }
@@ -146,14 +129,6 @@ extension UIColor {
 // Preview for MapView
 struct MapView_Previews: PreviewProvider {
     static var previews: some View {
-        MapView(
-            startLocation: MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194))),
-            destinations: [
-                Destination(mapItem: MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4094))),
-                            transportationMode: .car),
-                Destination(mapItem: MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: 37.7949, longitude: -122.3994))),
-                            transportationMode: .car)
-            ]
-        )
+        MapView(startLocation: nil, destinations: [])
     }
 }

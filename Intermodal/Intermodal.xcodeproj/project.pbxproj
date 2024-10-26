@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E4DDE2612CCD818300A2975D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4DDE2602CCD818300A2975D /* ViewController.swift */; };
+		E4DDE2632CCD81AD00A2975D /* stops.txt in Resources */ = {isa = PBXBuildFile; fileRef = E4DDE2622CCD81AD00A2975D /* stops.txt */; };
+		E4DDE2652CCD82E900A2975D /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4DDE2642CCD82E900A2975D /* SummaryView.swift */; };
+		E4DDE2672CCD86D500A2975D /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4DDE2662CCD86D500A2975D /* Models.swift */; };
 		E4E0AFDB2CCD5E7A00E55EC7 /* IntermodalApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E0AFDA2CCD5E7A00E55EC7 /* IntermodalApp.swift */; };
 		E4E0AFDD2CCD5E7A00E55EC7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E0AFDC2CCD5E7A00E55EC7 /* ContentView.swift */; };
 		E4E0AFDF2CCD5E7B00E55EC7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E4E0AFDE2CCD5E7B00E55EC7 /* Assets.xcassets */; };
@@ -17,6 +21,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E4DDE2602CCD818300A2975D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		E4DDE2622CCD81AD00A2975D /* stops.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = stops.txt; sourceTree = "<group>"; };
+		E4DDE2642CCD82E900A2975D /* SummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryView.swift; sourceTree = "<group>"; };
+		E4DDE2662CCD86D500A2975D /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		E4E0AFD72CCD5E7A00E55EC7 /* Intermodal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Intermodal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4E0AFDA2CCD5E7A00E55EC7 /* IntermodalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntermodalApp.swift; sourceTree = "<group>"; };
 		E4E0AFDC2CCD5E7A00E55EC7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -62,8 +70,12 @@
 				E4E0AFE82CCD5F2100E55EC7 /* WelcomeView.swift */,
 				E4E0AFEA2CCD5F4100E55EC7 /* FormView.swift */,
 				E4E0AFEC2CCD5F5D00E55EC7 /* MapView.swift */,
+				E4DDE2642CCD82E900A2975D /* SummaryView.swift */,
+				E4DDE2662CCD86D500A2975D /* Models.swift */,
 				E4E0AFDE2CCD5E7B00E55EC7 /* Assets.xcassets */,
 				E4E0AFE02CCD5E7B00E55EC7 /* Preview Content */,
+				E4DDE2602CCD818300A2975D /* ViewController.swift */,
+				E4DDE2622CCD81AD00A2975D /* stops.txt */,
 			);
 			path = Intermodal;
 			sourceTree = "<group>";
@@ -135,6 +147,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4E0AFE22CCD5E7B00E55EC7 /* Preview Assets.xcassets in Resources */,
+				E4DDE2632CCD81AD00A2975D /* stops.txt in Resources */,
 				E4E0AFDF2CCD5E7B00E55EC7 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -146,7 +159,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4DDE2612CCD818300A2975D /* ViewController.swift in Sources */,
+				E4DDE2652CCD82E900A2975D /* SummaryView.swift in Sources */,
 				E4E0AFEB2CCD5F4100E55EC7 /* FormView.swift in Sources */,
+				E4DDE2672CCD86D500A2975D /* Models.swift in Sources */,
 				E4E0AFDD2CCD5E7A00E55EC7 /* ContentView.swift in Sources */,
 				E4E0AFED2CCD5F5D00E55EC7 /* MapView.swift in Sources */,
 				E4E0AFE92CCD5F2100E55EC7 /* WelcomeView.swift in Sources */,

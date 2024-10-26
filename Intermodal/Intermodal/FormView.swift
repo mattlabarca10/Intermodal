@@ -1,10 +1,3 @@
-//
-//  FormView.swift
-//  Intermodal
-//
-//  Created by Matthew LaBarca on 10/26/24.
-// MKMapItemIdentifier / Place.id
-
 import SwiftUI
 import MapKit
 
@@ -37,8 +30,8 @@ struct FormView: View {
                 }
                 .padding()
 
-                // Navigation Link to MapView
-                NavigationLink(destination: MapView(startLocation: startLocation, destinations: destinations)) {
+                // Navigation Link to SummaryView
+                NavigationLink(destination: SummaryView(startLocation: startLocation, destinations: destinations)) {
                     Text("Generate Route")
                         .padding()
                         .background((startLocation != nil && !destinations.isEmpty) ? Color.green : Color.gray)
@@ -146,17 +139,6 @@ struct FormView: View {
         }
         searchResults = [] // Clear search results after selection
     }
-}
-
-// Structure to hold destination information
-struct Destination {
-    var mapItem: MKMapItem? = nil
-    var transportationMode: TransportationMode? = nil
-}
-
-// Enum for transportation modes
-enum TransportationMode: String, CaseIterable {
-    case walk, bike, car, train, bus
 }
 
 // Custom SearchBar component
