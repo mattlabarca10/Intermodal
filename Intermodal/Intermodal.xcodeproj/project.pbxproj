@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD852A2B2CCDC48F0044579D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD852A2A2CCDC48F0044579D /* LoginView.swift */; };
 		E4DDE2612CCD818300A2975D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4DDE2602CCD818300A2975D /* ViewController.swift */; };
 		E4DDE2632CCD81AD00A2975D /* stops.txt in Resources */ = {isa = PBXBuildFile; fileRef = E4DDE2622CCD81AD00A2975D /* stops.txt */; };
 		E4DDE2652CCD82E900A2975D /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4DDE2642CCD82E900A2975D /* SummaryView.swift */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DD852A2A2CCDC48F0044579D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		E4DDE2602CCD818300A2975D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E4DDE2622CCD81AD00A2975D /* stops.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = stops.txt; sourceTree = "<group>"; };
 		E4DDE2642CCD82E900A2975D /* SummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryView.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				E4E0AFE02CCD5E7B00E55EC7 /* Preview Content */,
 				E4DDE2602CCD818300A2975D /* ViewController.swift */,
 				E4DDE2622CCD81AD00A2975D /* stops.txt */,
+				DD852A2A2CCDC48F0044579D /* LoginView.swift */,
 			);
 			path = Intermodal;
 			sourceTree = "<group>";
@@ -162,6 +165,7 @@
 				E4DDE2612CCD818300A2975D /* ViewController.swift in Sources */,
 				E4DDE2652CCD82E900A2975D /* SummaryView.swift in Sources */,
 				E4E0AFEB2CCD5F4100E55EC7 /* FormView.swift in Sources */,
+				DD852A2B2CCDC48F0044579D /* LoginView.swift in Sources */,
 				E4DDE2672CCD86D500A2975D /* Models.swift in Sources */,
 				E4E0AFDD2CCD5E7A00E55EC7 /* ContentView.swift in Sources */,
 				E4E0AFED2CCD5F5D00E55EC7 /* MapView.swift in Sources */,

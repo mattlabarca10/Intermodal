@@ -139,7 +139,9 @@ struct FormView: View {
         }
         searchResults = [] // Clear search results after selection
     }
+    
 }
+
 
 // Custom SearchBar component
 struct SearchBar: UIViewRepresentable {
