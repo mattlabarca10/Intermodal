@@ -17,7 +17,8 @@ struct FormView: View {
 
                 // Dynamic Destination Inputs
                 ForEach(destinations.indices, id: \.self) { index in
-                    locationInputView(title: "Destination \(index + 1)", location: $destinations[index].mapItem, transportationMode: $destinations[index].transportationMode)
+                    let title = index == 0 ? "Starting Location" : "Destination \(index)"
+                    locationInputView(title: title, location: $destinations[index].mapItem, transportationMode: $destinations[index].transportationMode)
                 }
 
                 // Add Destination Button

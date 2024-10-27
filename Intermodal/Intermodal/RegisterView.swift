@@ -33,6 +33,7 @@ struct RegisterView: View {
                             .padding(10)
                             .background(Color(red: 56/255, green: 57/255, blue: 57/255))
                             .cornerRadius(10)
+                            .foregroundColor(.white)
                     }
                     .padding(.horizontal, 30)
                     .padding(.vertical, 10)
@@ -46,6 +47,7 @@ struct RegisterView: View {
                             .padding(10)
                             .background(Color(red: 56/255, green: 57/255, blue: 57/255))
                             .cornerRadius(10)
+                            .foregroundColor(.white)
                     }
                     .padding(.horizontal, 30)
                     .padding(.vertical, 10)
