@@ -44,7 +44,7 @@ struct WelcomeView: View {
                             .stroke(Color.green, lineWidth: 2))
                 }
 
-                NavigationLink(destination: LoginView()) {
+                NavigationLink(destination: RegisterView()) {
                     Text("Create Account")
                         .foregroundColor(.white)
                         .padding(.horizontal, 131)
