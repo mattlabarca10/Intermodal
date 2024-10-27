@@ -9,45 +9,62 @@ struct SummaryView: View {
     @State private var isFetchingTravelTimes = true
 
     var body: some View {
-        ZStack {
-            Color(red: 38/255, green: 38/255, blue: 38/255)
-                .edgesIgnoringSafeArea(.all) // Set background color
+        NavigationStack {
+            ZStack {
+                Color(red: 38/255, green: 38/255, blue: 38/255)
+                    .edgesIgnoringSafeArea(.all) // Set background color
 
-            VStack {
-                MapView(startLocation: startLocation, destinations: destinations)
-                    .frame(height: 250) // Adjust height and move map up
-                    .cornerRadius(10)
-                    .padding([.horizontal, .top])
-
-                ScrollView { // Enable scrolling for trip summary
-                    VStack(alignment: .leading, spacing: 15) {
-                        if isFetchingTravelTimes {
-                            ProgressView("Calculating travel times...")
+                VStack {
+                    MapView(startLocation: startLocation, destinations: destinations)
+                        .frame(height: 250) // Adjust height and move map up
+                        .cornerRadius(10)
+                        .padding([.horizontal, .top])
+                    
+                    ScrollView { // Enable scrolling for trip summary
+                        VStack(alignment: .leading, spacing: 15) {
+                            if isFetchingTravelTimes {
+                                ProgressView("Calculating travel times...")
+                                    .foregroundColor(.white)
+                                    .padding(.bottom)
+                            } else {
+                                Text("Trip Summary")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.green)
+                                    .padding(.vertical, 5)
+                                
+                                Text(tripSummary)
+                                    .font(.body)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal)
+                            }
+                        }
+                        .padding()
+                        .background(Color(UIColor.systemGray6).opacity(0.15))
+                        .cornerRadius(12)
+                        .shadow(radius: 3)
+                        .padding([.horizontal, .bottom])
+                    }
+                    HStack {
+                        NavigationLink(destination: TripCompleteView(startLocation: startLocation, destinations: destinations)) {
+                            Text("End Your Trip")
                                 .foregroundColor(.white)
-                                .padding(.bottom)
-                        } else {
-                            Text("Trip Summary")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(.green)
-                                .padding(.vertical, 5)
-
-                            Text(tripSummary)
-                                .font(.body)
-                                .foregroundColor(.white)
-                                .padding(.horizontal)
+                                .padding(.horizontal, 122)
+                                .padding(.vertical, 10)
+                                .background(Color.green)
+                                .clipShape(RoundedRectangle(cornerRadius: 25))
+                                .overlay(RoundedRectangle(cornerRadius: 25)
+                                    .stroke(Color.green, lineWidth: 2))
                         }
                     }
-                    .padding()
-                    .background(Color(UIColor.systemGray6).opacity(0.15))
-                    .cornerRadius(12)
-                    .shadow(radius: 3)
-                    .padding([.horizontal, .bottom])
+                    
                 }
             }
+            .onAppear(perform: fetchTravelTimes)
         }
-        .onAppear(perform: fetchTravelTimes)
-    }
+        
+            
+        }
 
     private var startLatitude: Double? {
         return startLocation?.placemark.coordinate.latitude
