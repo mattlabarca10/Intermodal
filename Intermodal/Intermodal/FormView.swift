@@ -5,7 +5,7 @@ struct FormView: View {
     @State private var searchText: String = ""
     @State private var searchResults: [MKMapItem] = []
     @State private var isSearching: Bool = false
-
+    @State private var isDestinationSelected: Bool = false
     @State private var startLocation: MKMapItem?
     @State private var destinations: [Destination] = [] // Holds destination details
 
@@ -21,14 +21,19 @@ struct FormView: View {
                 }
 
                 // Add Destination Button
-                Button(action: addDestination) {
-                    Text("Add Destination")
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .padding()
+                HStack{
+                    Button(action: addDestination){
+                        Image(systemName: "plus")
+                            .foregroundColor(.white)
+                    }
+                    .frame(width: 25,height: 25)
+                    .background(.blue)
+                    .cornerRadius(40)
+                    Text("Add destination")
+                    Spacer()
+                } .padding(.leading,30)
+
+                
 
                 // Navigation Link to SummaryView
                 NavigationLink(destination: SummaryView(startLocation: startLocation, destinations: destinations)) {
@@ -60,6 +65,7 @@ struct FormView: View {
                 }
             }
             .navigationTitle("Location Search")
+            
             .onChange(of: searchText) { newValue in
                 performSearch()
             }
