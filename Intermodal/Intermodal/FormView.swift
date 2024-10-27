@@ -1,15 +1,17 @@
 import SwiftUI
 import MapKit
 
+
+
 struct FormView: View {
     @State private var searchText: String = ""
     @State private var searchResults: [MKMapItem] = []
     @State private var isSearching: Bool = false
-    
     @State private var startLocation: MKMapItem?
     @State private var destinations: [Destination] = [] // Holds destination details
     @State private var showAlert: Bool = false // To show alert when trying to add destination without selection
-    @State private var isTakingTrain = false
+    @State private var isTakingTrain: Bool = false
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -18,7 +20,7 @@ struct FormView: View {
                 VStack(spacing: 20) {
                     // Search Bar for Locations
                     HStack{
-                        SearchBar(text: $searchText, onSearch: performSearch)
+                        SearchBar(text: $searchText,isTakingTrain: $isTakingTrain, onSearch: performSearch)
                             .frame(width: 200)
                             .padding()
                         
@@ -38,11 +40,7 @@ struct FormView: View {
                                }
                     
                     
-                           
-                        
-                    
-                        
-                        
+                
                     
                     // Display selected Start Location
                     if let startLocation = startLocation {
@@ -216,6 +214,7 @@ struct FormView: View {
 // Custom SearchBar component
 struct SearchBar: UIViewRepresentable {
     @Binding var text: String
+    @Binding var isTakingTrain: Bool
     var onSearch: () -> Void
     
     class Coordinator: NSObject, UISearchBarDelegate {
@@ -244,20 +243,31 @@ struct SearchBar: UIViewRepresentable {
     func makeUIView(context: Context) -> UISearchBar {
         let searchBar = UISearchBar()
         searchBar.delegate = context.coordinator
-        searchBar.barTintColor = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1) // Dark gray color
-        searchBar.searchTextField.backgroundColor = UIColor(red: 57/255, green: 57/255, blue: 57/255, alpha: 1) // Text field background color
-        searchBar.searchTextField.textColor = UIColor.black // Text color
         
-        // Change the color of the search icon
+        if isTakingTrain {
+            
+        } else {
+            searchBar.barTintColor = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1) // Custom color for "Not Taking Train"
+            searchBar.searchTextField.backgroundColor = UIColor(red: 57/255, green: 57/255, blue: 57/255, alpha: 1)
+            searchBar.searchTextField.textColor = UIColor.black
+        }
+        
         if let searchIcon = searchBar.searchTextField.leftView as? UIImageView {
             searchIcon.image = searchIcon.image?.withRenderingMode(.alwaysTemplate)
-            searchIcon.tintColor = UIColor.black // Set your desired color here
+            searchIcon.tintColor = isTakingTrain ? UIColor.white : UIColor.black
         }
         
         return searchBar
     }
+    
     func updateUIView(_ uiView: UISearchBar, context: Context) {
         uiView.text = text
+        uiView.barTintColor = isTakingTrain ? UIColor(red: 0/255, green: 100/255, blue: 200/255, alpha: 1) : UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1)
+        uiView.searchTextField.backgroundColor = isTakingTrain ? UIColor(red: 0/255, green: 50/255, blue: 150/255, alpha: 1) : UIColor(red: 57/255, green: 57/255, blue: 57/255, alpha: 1)
+        
+        if let searchIcon = uiView.searchTextField.leftView as? UIImageView {
+            searchIcon.tintColor = isTakingTrain ? UIColor.white : UIColor.black
+        }
     }
 }
 
