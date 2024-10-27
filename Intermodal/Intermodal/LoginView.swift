@@ -94,7 +94,7 @@ struct LoginView: View {
                 
             }
             .padding()
-            .background(Color(red: 20/255,green : 20/255,blue:20/255))
+            .background(Color(red: 38/255,green : 38/255,blue:38/255))
         }
     }
 }

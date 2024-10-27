@@ -17,9 +17,7 @@ struct WelcomeView: View {
 
                 Spacer()
                 
-                Button(action: {
-                    // Action for Login
-                }) {
+                NavigationLink(destination: LoginView()) {
                     Text("Login")
                         .foregroundColor(.white)
                         .padding(.horizontal, 170)
@@ -30,9 +28,7 @@ struct WelcomeView: View {
                             .stroke(Color.green, lineWidth: 2))
                 }
 
-                Button(action: {
-                    // Action for Create Account
-                }) {
+                NavigationLink(destination: LoginView()) {
                     Text("Create Account")
                         .foregroundColor(.white)
                         .padding(.horizontal, 131)
@@ -55,7 +51,7 @@ struct WelcomeView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity) // Full-space frame on VStack
-            .background(Color(red: 20/255, green: 20/255, blue: 20/255))
+            .background(Color(red: 38/255, green: 38/255, blue: 38/255))
         }
     }
 }
