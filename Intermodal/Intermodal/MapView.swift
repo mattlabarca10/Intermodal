@@ -56,7 +56,7 @@ struct MapView: UIViewRepresentable {
             case .walk:
                 request.transportType = .walking
             case .bike:
-                request.transportType = .automobile // MKMapKit does not support bicycle directly
+                request.transportType = .walking // MKMapKit does not support bicycle directly
             case .car:
                 request.transportType = .automobile
             case .train, .bus:
@@ -125,6 +125,7 @@ extension UIColor {
         )
     }
 }
+
 
 // Preview for MapView
 struct MapView_Previews: PreviewProvider {
