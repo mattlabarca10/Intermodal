@@ -17,7 +17,7 @@ struct TripCompleteView: View {
                     .ignoresSafeArea() // Extend background color to the entire screen
 
                 VStack(spacing: 20) {
-                    Text("Total Distance Traveled: \(String(format: "%.2f", totDistance)) km")
+                    Text("Total Distance Traveled: \(String(format: "%.2f", totDistance/2.2)) mi")
                         .font(.title)
                         .foregroundColor(.white)
                         .padding()
@@ -81,8 +81,8 @@ struct TripCompleteView: View {
         }
         
         // Calculate carbon emissions based on totDistance
-        carCarbon = totDistance * 0.33
-        tranCarbon = totDistance * 0.21
+        carCarbon = totDistance * 0.96
+        tranCarbon = totDistance * 0.33
     }
 
     // Calculate distance between two coordinates

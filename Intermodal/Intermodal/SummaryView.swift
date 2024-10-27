@@ -19,7 +19,7 @@ struct SummaryView: View {
                         .frame(height: 400) // Adjust height and move map up
                         .cornerRadius(10)
                         .padding(.horizontal)
-                        .padding(.top,-30)
+                        .padding(.top,0)
                     
                    
                         VStack(alignment: .leading, spacing: 15) {
@@ -113,13 +113,13 @@ struct SummaryView: View {
             let mode = destination.transportationMode?.rawValue.capitalized ?? "Unknown mode"
             
             summary += "Trip to \(destinationMapItem.name ?? "Unknown") by \(mode)\nTrip Time: \(formatTime(travelTime))\n"
-            summary += String(format: "(Trip Distance: %.2f km)\n\n", distance)
+            summary += String(format: "(Trip Distance: %.2f mi)\n\n", distance/2.2)
             totalDistance += distance
             totalDuration += travelTime
         }
 
         summary += "Total Duration: \(formatTime(totalDuration))"
-        summary += "\nTotal Distance: \(roundToTwoDecimalPlaces(totalDistance))km"
+        summary += "\nTotal Distance: \(roundToTwoDecimalPlaces(totalDistance/2.2)) mi"
         return summary
     }
 
