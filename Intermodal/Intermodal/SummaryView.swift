@@ -167,3 +167,4 @@ struct SummaryView_Previews: PreviewProvider {
         SummaryView(destinations: [])
     }
 }
+
