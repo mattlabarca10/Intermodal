@@ -16,7 +16,7 @@ struct YourAppNameApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RegisterView() // Starting view
+            WelcomeView() // Starting view
         }
     }
 }
