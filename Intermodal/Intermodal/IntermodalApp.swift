@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import Firebase
 
 @main
-struct IntermodalApp: App {
+struct YourAppNameApp: App {
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RegisterView() // Starting view
         }
     }
 }

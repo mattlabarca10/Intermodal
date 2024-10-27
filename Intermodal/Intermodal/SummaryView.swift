@@ -17,6 +17,10 @@ struct SummaryView: View {
                 .padding()
                 .foregroundColor(.black)
                 .onAppear(perform: fetchTravelTimes) // Start fetching travel times on appear
+
+            Spacer()
+            
+            
         }
     }
 
