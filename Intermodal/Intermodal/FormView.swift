@@ -7,14 +7,11 @@ struct FormView: View {
     @State private var searchText: String = ""
     @State private var searchResults: [MKMapItem] = []
     @State private var isSearching: Bool = false
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
+
     @State private var isDestinationSelected: Bool = false
-=======
+
     
->>>>>>> f32ae34f14f2c29473d0744009d309038ff33f5a
->>>>>>> b7bf69b73252de5f5f5ad8c13fbd2b36c7eb5328
+
     @State private var startLocation: MKMapItem?
     @State private var destinations: [Destination] = [] // Holds destination details
     @State private var showAlert: Bool = false // To show alert when trying to add destination without selection
@@ -22,7 +19,7 @@ struct FormView: View {
     
     var body: some View {
         NavigationView {
-<<<<<<< HEAD
+
             VStack {
                 // Start Location
                 locationInputView(title: "Start Location", location: $startLocation, isStart: true)
@@ -109,7 +106,7 @@ struct FormView: View {
                                     .foregroundColor(.red)
                             }
                         }
->>>>>>> f32ae34f14f2c29473d0744009d309038ff33f5a
+
                     }
                     
                     // Dynamic Destination Inputs
@@ -173,14 +170,13 @@ struct FormView: View {
                 .alert(isPresented: $showAlert) {
                     Alert(title: Text("Select a Destination"), message: Text("Please select a location for the destination before adding."), dismissButton: .default(Text("OK")))
                 }
-<<<<<<< HEAD
+
             }
             .navigationTitle("Location Search")
             
             .onChange(of: searchText) { newValue in
                 performSearch()
-=======
->>>>>>> f32ae34f14f2c29473d0744009d309038ff33f5a
+
             }
         }
     }

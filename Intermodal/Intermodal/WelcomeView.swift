@@ -15,7 +15,7 @@ struct WelcomeView: View {
                     .foregroundColor(.white)
                     .padding()
 
-<<<<<<< HEAD
+
 struct WelcomeView : View {
     var body : some View {
         ZStack{
@@ -103,7 +103,7 @@ struct WelcomeView : View {
             .frame(maxWidth: .infinity, maxHeight: .infinity) // Full-space frame on VStack
             .background(Color(red: 38/255, green: 38/255, blue: 38/255))
         }
->>>>>>> f32ae34f14f2c29473d0744009d309038ff33f5a
+
     }
 }
 
