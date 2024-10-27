@@ -9,7 +9,7 @@ struct FormView: View {
     @State private var startLocation: MKMapItem?
     @State private var destinations: [Destination] = [] // Holds destination details
     @State private var showAlert: Bool = false // To show alert when trying to add destination without selection
-    
+    @State private var isTakingTrain = false
     var body: some View {
         NavigationView {
             ZStack {
@@ -19,11 +19,28 @@ struct FormView: View {
                     // Search Bar for Locations
                     HStack{
                         SearchBar(text: $searchText, onSearch: performSearch)
-                            .frame(width: 300)
+                            .frame(width: 200)
                             .padding()
                         
+                    Text("Train?")
+                    .font(.headline)
+                                   
+                        Picker(selection: $isTakingTrain, label: Text("Mode")) {
+                        Text("Yes").tag(true)
+                        Text("No").tag(false)
+                        }
+                        .pickerStyle(DefaultPickerStyle())
+                        .padding()
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(8)
+                        .padding(.top,10)
+                        .padding(.leading,-5)
+                               }
+                    
+                    
+                           
                         
-                    }
+                    
                         
                         
                     
