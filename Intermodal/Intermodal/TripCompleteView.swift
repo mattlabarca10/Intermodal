@@ -10,29 +10,52 @@ struct TripCompleteView: View {
     @State private var tranCarbon: Double = 0.0  // Transit carbon emissions
 
     var body: some View {
-        ZStack {
-            // Background color to match LoginView
-            Color(red: 38/255, green: 38/255, blue: 38/255)
-                .ignoresSafeArea() // Extend background color to the entire screen
-            
-            VStack(spacing: 20) {
-                Text("Total Distance Traveled: \(String(format: "%.2f", totDistance)) km")
-                    .font(.title)
-                    .foregroundColor(.white)
-                    .padding()
+        NavigationStack {
+            ZStack {
+                // Background color to match LoginView
+                Color(red: 38/255, green: 38/255, blue: 38/255)
+                    .ignoresSafeArea() // Extend background color to the entire screen
 
-                Text("Car Carbon Emissions: \(String(format: "%.2f", carCarbon)) lbs CO₂")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                
-                Text("Transit Carbon Emissions: \(String(format: "%.2f", tranCarbon)) lbs CO₂")
-                    .font(.headline)
-                    .foregroundColor(.white)
+                VStack(spacing: 20) {
+                    Text("Total Distance Traveled: \(String(format: "%.2f", totDistance)) km")
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .padding()
+
+                    Text("🚗 Car Carbon Emissions: \(String(format: "%.2f", carCarbon)) lbs CO₂")
+                        .font(.headline)
+                        .bold()
+                        .foregroundColor(.white)
+
+                    Text("Carbon Emissions for Route: \(String(format: "%.2f", tranCarbon)) lbs CO₂")
+                        .font(.headline)
+                        .bold()
+                        .foregroundColor(.white)
+                    
+                    Text("🌱 You Saved \(String(format: "%.2f", carCarbon-tranCarbon)) lbs of CO₂")
+                        .font(.headline)
+                        .bold()
+                        .foregroundColor(.white)
+                    
+                    Spacer() // Pushes everything above upwards
+
+                    NavigationLink(destination: ProfileView()) {
+                        Text("See Your Profile")
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 122)
+                            .padding(.vertical, 10)
+                            .background(Color.green)
+                            .clipShape(RoundedRectangle(cornerRadius: 25))
+                            .overlay(RoundedRectangle(cornerRadius: 25)
+                                .stroke(Color.green, lineWidth: 2))
+                    }
+                }
+                .padding(.top,200)
+                .onAppear(perform: calculateTotalDistance)
             }
-            .padding()
-            .onAppear(perform: calculateTotalDistance)
         }
     }
+        
     
     // Function to calculate total distance and carbon emissions
     private func calculateTotalDistance() {

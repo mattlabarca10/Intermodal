@@ -114,7 +114,7 @@ struct SummaryView: View {
         }
 
         summary += "\nTotal Duration: \(formatTime(totalDuration))"
-        summary += "\nTotal Distance: \(formatTime(totalDistance))"
+        summary += "\nTotal Distance: \((totalDistance))"
         return summary
     }
 
