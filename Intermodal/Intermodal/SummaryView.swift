@@ -52,7 +52,7 @@ struct SummaryView: View {
             guard let destinationMapItem = destination.mapItem else { continue }
 
             // Calculate distance to the destination
-            let destinationCoord = destinationCoordinates[index] ?? (nil)
+            let destinationCoord = destinationCoordinates[index]
             guard let destLat = destinationCoord?.latitude, let destLon = destinationCoord?.longitude else {
                 continue // Skip if destination coordinates are invalid
             }
@@ -79,17 +79,17 @@ struct SummaryView: View {
     private func fetchTravelTimes() {
         guard let startLocation = startLocation else { return }
 
-        travelTimes = [] // Reset travel times array
+        travelTimes = Array(repeating: 0, count: destinations.count) // Reset travel times array to match the number of destinations
         isFetchingTravelTimes = true
 
         let group = DispatchGroup() // Group to manage asynchronous requests
 
-        for destination in destinations {
+        for (index, destination) in destinations.enumerated() {
             guard let destinationMapItem = destination.mapItem else { continue }
             group.enter() // Enter the group for each request
 
             estimateTravelTime(from: startLocation, to: destinationMapItem, mode: destination.transportationMode ?? .walk) { travelTime in
-                travelTimes.append(travelTime) // Append travel time to the array
+                travelTimes[index] = travelTime // Append travel time to the correct index
                 group.leave() // Leave the group once done
             }
         }
@@ -110,7 +110,7 @@ struct SummaryView: View {
         case .walk:
             request.transportType = .walking
         case .bike:
-            request.transportType = .automobile // MKMapKit does not support bicycle routes directly
+            request.transportType = .walking // Note: Use automobile since MKMapKit does not support bike routes directly
         case .car:
             request.transportType = .automobile
         default:
@@ -132,7 +132,13 @@ struct SummaryView: View {
                 return
             }
 
-            completion(route.expectedTravelTime) // Pass the estimated time
+            // Adjust expected travel time for biking
+            let expectedTravelTime = route.expectedTravelTime
+            if mode == .bike {
+                completion(expectedTravelTime / 3) // Adjust travel time for biking
+            } else {
+                completion(expectedTravelTime) // Pass the estimated time for other modes
+            }
         }
     }
 
