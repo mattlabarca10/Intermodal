@@ -5,155 +5,174 @@ struct FormView: View {
     @State private var searchText: String = ""
     @State private var searchResults: [MKMapItem] = []
     @State private var isSearching: Bool = false
-    
     @State private var startLocation: MKMapItem?
-    @State private var destinations: [Destination] = [] // Holds destination details
-    @State private var showAlert: Bool = false // To show alert when trying to add destination without selection
+    @State private var destinations: [Destination] = []
+    @State private var showAlert: Bool = false
     @State private var isTakingTrain = false
+    
     var body: some View {
         NavigationView {
-            ZStack {
-                Color(red: 38/255, green: 38/255, blue: 38/255)
-                    .edgesIgnoringSafeArea(.all)
-                VStack(spacing: 20) {
-                    // Search Bar for Locations
-                    HStack{
-                        SearchBar(text: $searchText, onSearch: performSearch)
-                            .frame(width: 200)
-                            .padding()
-                        
-                    Text("Train?")
-                    .font(.headline)
-                                   
-                        Picker(selection: $isTakingTrain, label: Text("Mode")) {
-                        Text("Yes").tag(true)
-                        Text("No").tag(false)
-                        }
-                        .pickerStyle(DefaultPickerStyle())
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(8)
-                        .padding(.top,10)
-                        .padding(.leading,-5)
-                               }
-                    
-                    
-                           
-                        
-                    
-                        
-                        
-                    
-                    // Display selected Start Location
-                    if let startLocation = startLocation {
-                        HStack {
-                            Text("Start Location: \(startLocation.name ?? "Unknown")")
-                                .font(.headline)
-                                .foregroundColor(.blue)
-                                .padding()
-                                .background(Color.gray.opacity(0.2))
-                                .cornerRadius(8)
-                            
-                            Button(action: { removeStartLocation() }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(.red)
-                            }
-                        }
-                    }
-                    
-                    // Dynamic Destination Inputs
-                    ForEach(destinations.indices, id: \.self) { index in
-                        HStack {
-                            locationInputView(
-                                title: "Destination \(index + 1)",
-                                location: $destinations[index].mapItem,
-                                transportationMode: $destinations[index].transportationMode
-                            )
-                            Button(action: { removeDestination(at: index) }) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(.red)
-                            }
-                        }
-                    }
-                    
-                    // Add Destination Button
-                    Button(action: addDestination) {
-                        Text("Add Destination")
-                            .padding()
-                            .background(Color.green)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
+            VStack(spacing: 0) {
+                // Fixed Header Section
+                headerSection
                     .padding()
+                
+                // Main Content Area
+                HStack(spacing: 0) {
+                    // Left side: Locations
+                    locationsSection
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     
-                    // Navigation Link to SummaryView
-                    NavigationLink(destination: SummaryView(startLocation: startLocation, destinations: destinations)) {
-                        Text("Generate Route")
-                            .padding()
-                            .background((startLocation != nil && !destinations.isEmpty) ? Color.green : Color.gray)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
-                    }
-                    .disabled(startLocation == nil || destinations.isEmpty)
-                    
-                    // List of search results
-                    List(searchResults, id: \.self) { item in
-                        VStack(alignment: .leading) {
-                            Text(item.name ?? "Unknown Location")
-                                .font(.headline)
-                            Text("\(item.placemark.coordinate.latitude), \(item.placemark.coordinate.longitude)")
-                                .font(.subheadline)
-                        }
-                        .onTapGesture {
-                            saveLocation(item) // Save selected location
-                        }
-                    }
-                    
-                    // Display progress while searching
-                    if isSearching {
-                        ProgressView("Searching...")
-                            .padding()
+                    // Right side: Search Results
+                    if !searchResults.isEmpty {
+                        searchResultsSection
+                            .frame(width: UIScreen.main.bounds.width * 0.4)
+                            .transition(.move(edge: .trailing))
                     }
                 }
-                .navigationTitle("Location Search")
-                .onChange(of: searchText) { newValue in
-                    performSearch()
+            }
+            .background(Color(red: 38/255, green: 38/255, blue: 38/255))
+            .navigationTitle("")  // Clear the default title
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Plan Your Route")
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment:
+                                .leading)  // Left align
+                        .padding(.leading, 16)  // Add left padding
+                        .padding(.top, 65)
+                        .font(.system(size: 32, weight: .bold, design: .rounded))
                 }
-                .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Select a Destination"), message: Text("Please select a location for the destination before adding."), dismissButton: .default(Text("OK")))
-                }
+                
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Select a Location"),
+                    message: Text("Please select a location before adding another destination."),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
     }
     
-    
-    private func locationInputView(title: String, location: Binding<MKMapItem?>, transportationMode: Binding<TransportationMode?>? = nil) -> some View {
-        VStack {
+    // MARK: - Header Section
+    private var headerSection: some View {
+        VStack(spacing: 12) {
             HStack {
-                Text(title)
-                    .font(.headline)
+                // Search Bar
+                SearchBar(text: $searchText, onSearch: performSearch)
+                    .frame(height: 40)
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(10)
                 
-                if let selectedLocation = location.wrappedValue {
-                    // Display selected location in the search bar
-                    Text(selectedLocation.name ?? "Unknown Location")
-                        .foregroundColor(.gray)
-                }
-                
-                // Dropdown for Transportation Mode for destinations
-                if transportationMode != nil {
-                    Picker("Mode", selection: transportationMode!) {
-                        ForEach(TransportationMode.allCases, id: \.self) { mode in
-                            Text(mode.rawValue.capitalized).tag(mode as TransportationMode?)
-                        }
+                // Train Toggle
+                VStack(alignment: .leading) {
+                    Text("Train?")
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                    
+                    Picker("", selection: $isTakingTrain) {
+                        Text("Yes").tag(true)
+                        Text("No").tag(false)
                     }
-                    .pickerStyle(MenuPickerStyle())
+                    .pickerStyle(SegmentedPickerStyle())
                     .frame(width: 100)
                 }
             }
-            .padding()
+            
+            if isSearching {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            }
         }
     }
     
+    // MARK: - Locations Section
+    private var locationsSection: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 16) {
+                    // Start Location Card
+                    if let startLocation = startLocation {
+                        LocationCard(
+                            title: "Start Location",
+                            location: startLocation,
+                            onRemove: removeStartLocation
+                        )
+                    } else {
+                        EmptyLocationCard(title: "Set Start Location")
+                    }
+                    
+                    // Destinations
+                    ForEach(destinations.indices, id: \.self) { index in
+                        LocationCard(
+                            title: "Destination \(index + 1)",
+                            location: destinations[index].mapItem,
+                            transportationMode: $destinations[index].transportationMode,
+                            onRemove: { removeDestination(at: index) }
+                        )
+                    }
+                }
+                .padding()
+            }
+            
+            // Fixed bottom actions
+            actionButtonsSection
+                .padding()
+                .background(Color(red: 38/255, green: 38/255, blue: 38/255))
+        }
+    }
+    
+    // MARK: - Search Results Section
+    private var searchResultsSection: some View {
+        VStack {
+            ScrollView {
+                VStack(spacing: 8) {
+                    ForEach(searchResults, id: \.self) { item in
+                        SearchResultRow(item: item)
+                            .onTapGesture { saveLocation(item) }
+                    }
+                }
+                .padding(8)
+            }
+        }
+        .background(Color.gray.opacity(0.1))
+    }
+    
+    // MARK: - Action Buttons Section
+    private var actionButtonsSection: some View {
+        VStack(spacing: 12) {
+            Button(action: addDestination) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                    Text("Add Destination")
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.green)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+            }
+            
+            NavigationLink(
+                destination: SummaryView(startLocation: startLocation, destinations: destinations)
+            ) {
+                HStack {
+                    Image(systemName: "map.fill")
+                    Text("Generate Route")
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background((startLocation != nil && !destinations.isEmpty) ? Color.green : Color.gray)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+            }
+            .disabled(startLocation == nil || destinations.isEmpty)
+        }
+    }
+    
+    // Helper Methods (unchanged)
     private func addDestination() {
         if destinations.isEmpty || (destinations.last?.mapItem != nil) {
             destinations.append(Destination())
@@ -168,6 +187,16 @@ struct FormView: View {
     
     private func removeDestination(at index: Int) {
         destinations.remove(at: index)
+    }
+    
+    private func saveLocation(_ location: MKMapItem) {
+        if startLocation == nil {
+            startLocation = location
+        } else if let index = destinations.firstIndex(where: { $0.mapItem == nil }) {
+            destinations[index].mapItem = location
+        }
+        searchText = ""
+        searchResults = []
     }
     
     private func performSearch() {
@@ -198,18 +227,93 @@ struct FormView: View {
             }
         }
     }
+}
+
+// Supporting Views (LocationCard, EmptyLocationCard, SearchResultRow, SearchBar remain unchanged)
+
+// MARK: - Supporting Views
+struct LocationCard: View {
+    let title: String
+    let location: MKMapItem?
+    var transportationMode: Binding<TransportationMode?>? = nil
+    let onRemove: () -> Void
     
-    private func saveLocation(_ location: MKMapItem) {
-        if startLocation == nil {
-            startLocation = location
-            print("Start location set to: \(location.name ?? "Unknown")")
-            searchText = "" // Clear search text after selecting
-        } else if let index = destinations.firstIndex(where: { $0.mapItem == nil }) {
-            destinations[index].mapItem = location
-            print("Destination \(index + 1) set to: \(location.name ?? "Unknown")")
-            searchText = "" // Clear search text after selecting
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                Button(action: onRemove) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.red)
+                }
+            }
+            
+            if let location = location {
+                Text(location.name ?? "Unknown Location")
+                    .foregroundColor(.white.opacity(0.8))
+            }
+            
+            if let transportationMode = transportationMode {
+                Picker("Transportation", selection: transportationMode) {
+                    ForEach(TransportationMode.allCases, id: \.self) { mode in
+                        Text(mode.rawValue.capitalized).tag(mode as TransportationMode?)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            }
         }
-        searchResults = [] // Clear search results after selection
+        .padding()
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(10)
+    }
+}
+
+struct EmptyLocationCard: View {
+    let title: String
+    
+    var body: some View {
+        VStack {
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.white.opacity(0.6))
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(10)
+    }
+}
+
+struct SearchResultRow: View {
+    let item: MKMapItem
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(item.name ?? "Unknown Location")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                
+                if let address = item.placemark.thoroughfare {
+                    Text(address)
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.7))
+                }
+            }
+            
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .foregroundColor(.white.opacity(0.5))
+        }
+        .padding()
+        .background(Color.gray.opacity(0.3))
+        .cornerRadius(8)
     }
 }
 
@@ -246,7 +350,7 @@ struct SearchBar: UIViewRepresentable {
         searchBar.delegate = context.coordinator
         searchBar.barTintColor = UIColor(red: 38/255, green: 38/255, blue: 38/255, alpha: 1) // Dark gray color
         searchBar.searchTextField.backgroundColor = UIColor(red: 57/255, green: 57/255, blue: 57/255, alpha: 1) // Text field background color
-        searchBar.searchTextField.textColor = UIColor.black // Text color
+        searchBar.searchTextField.textColor = UIColor.white // Text color
         
         // Change the color of the search icon
         if let searchIcon = searchBar.searchTextField.leftView as? UIImageView {

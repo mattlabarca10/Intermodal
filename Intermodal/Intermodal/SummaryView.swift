@@ -5,23 +5,48 @@ struct SummaryView: View {
     var startLocation: MKMapItem?
     var destinations: [Destination]
 
-    @State private var travelTimes: [TimeInterval] = [] // Array to hold travel times
-    @State private var isFetchingTravelTimes = true // State to check if fetching is in progress
+    @State private var travelTimes: [TimeInterval] = []
+    @State private var isFetchingTravelTimes = true
 
     var body: some View {
-        VStack {
-            MapView(startLocation: startLocation, destinations: destinations)
-                .frame(height: 300) // Set a fixed height for the map
+        ZStack {
+            Color(red: 38/255, green: 38/255, blue: 38/255)
+                .edgesIgnoringSafeArea(.all) // Set background color
 
-            Text(tripSummary)
-                .padding()
-                .foregroundColor(.black)
-                .onAppear(perform: fetchTravelTimes) // Start fetching travel times on appear
+            VStack {
+                MapView(startLocation: startLocation, destinations: destinations)
+                    .frame(height: 250) // Adjust height and move map up
+                    .cornerRadius(10)
+                    .padding([.horizontal, .top])
 
-            Spacer()
-            
-            
+                ScrollView { // Enable scrolling for trip summary
+                    VStack(alignment: .leading, spacing: 15) {
+                        if isFetchingTravelTimes {
+                            ProgressView("Calculating travel times...")
+                                .foregroundColor(.white)
+                                .padding(.bottom)
+                        } else {
+                            Text("Trip Summary")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.green)
+                                .padding(.vertical, 5)
+
+                            Text(tripSummary)
+                                .font(.body)
+                                .foregroundColor(.white)
+                                .padding(.horizontal)
+                        }
+                    }
+                    .padding()
+                    .background(Color(UIColor.systemGray6).opacity(0.15))
+                    .cornerRadius(12)
+                    .shadow(radius: 3)
+                    .padding([.horizontal, .bottom])
+                }
+            }
         }
+        .onAppear(perform: fetchTravelTimes)
     }
 
     private var startLatitude: Double? {
@@ -44,10 +69,11 @@ struct SummaryView: View {
     private var tripSummary: String {
         guard let start = startLocation else { return "No starting location." }
 
-        var summary = "Starting at \(start.name ?? "Unknown")\n"
+        var summary = "Starting Location:\n \(start.name ?? "Unknown\n")"
+        
         var totalDuration: TimeInterval = 0
+        var totalDistance: Double = 0
 
-        // Get start coordinates
         guard let startLat = startLatitude, let startLon = startLongitude else {
             return "No valid coordinates for starting location."
         }
@@ -55,70 +81,62 @@ struct SummaryView: View {
         for (index, destination) in destinations.enumerated() {
             guard let destinationMapItem = destination.mapItem else { continue }
 
-            // Calculate distance to the destination
             let destinationCoord = destinationCoordinates[index]
             guard let destLat = destinationCoord?.latitude, let destLon = destinationCoord?.longitude else {
-                continue // Skip if destination coordinates are invalid
+                continue
             }
 
             let distance = calculateDistance(lat1: startLat, lon1: startLon, lat2: destLat, lon2: destLon)
-
-            // Get travel time from the travelTimes array
-            let travelTime = index < travelTimes.count ? travelTimes[index] : 0 // Default to 0 if travel time not yet fetched
-
+            let travelTime = index < travelTimes.count ? travelTimes[index] : 0
             let mode = destination.transportationMode?.rawValue.capitalized ?? "Unknown mode"
-            summary += "\(mode) to \(destinationMapItem.name ?? "Unknown"): \(formatTime(travelTime))"
-            summary += String(format: " (Distance: %.2f km)\n", distance)
-
-            totalDuration += travelTime // Add travel time to total duration
+            
+            summary += "Trip to \(destinationMapItem.name ?? "Unknown") by \(mode)\n Trip Time: \(formatTime(travelTime))\n"
+            summary += String(format: " (Trip Distance: %.2f km)\n", distance)
+            totalDistance += distance
+            totalDuration += travelTime
         }
 
-        // Adding total duration to the summary
-        summary += "Total Duration: \(formatTime(totalDuration))"
-
+        summary += "\nTotal Duration: \(formatTime(totalDuration))"
+        summary += "\nTotal Distance: \(formatTime(totalDistance))"
         return summary
     }
 
-    // Method to fetch travel times for each destination
     private func fetchTravelTimes() {
         guard let startLocation = startLocation else { return }
 
-        travelTimes = Array(repeating: 0, count: destinations.count) // Reset travel times array to match the number of destinations
+        travelTimes = Array(repeating: 0, count: destinations.count)
         isFetchingTravelTimes = true
-
-        let group = DispatchGroup() // Group to manage asynchronous requests
+        let group = DispatchGroup()
 
         for (index, destination) in destinations.enumerated() {
             guard let destinationMapItem = destination.mapItem else { continue }
-            group.enter() // Enter the group for each request
+            group.enter()
 
             estimateTravelTime(from: startLocation, to: destinationMapItem, mode: destination.transportationMode ?? .walk) { travelTime in
-                travelTimes[index] = travelTime // Append travel time to the correct index
-                group.leave() // Leave the group once done
+                travelTimes[index] = travelTime
+                group.leave()
             }
         }
 
         group.notify(queue: .main) {
-            isFetchingTravelTimes = false // Mark fetching as complete
+            isFetchingTravelTimes = false
         }
     }
 
-    // Travel time estimation method
     private func estimateTravelTime(from source: MKMapItem, to destination: MKMapItem, mode: TransportationMode, completion: @escaping (TimeInterval) -> Void) {
         let request = MKDirections.Request()
         request.source = source
         request.destination = destination
 
-        // Set transportation type based on mode
         switch mode {
         case .walk:
             request.transportType = .walking
         case .bike:
-            request.transportType = .walking // Note: Use automobile since MKMapKit does not support bike routes directly
+            request.transportType = .walking
         case .car:
             request.transportType = .automobile
         default:
-            completion(0) // Unknown mode
+            completion(0)
             return
         }
 
@@ -126,44 +144,37 @@ struct SummaryView: View {
         directions.calculate { response, error in
             if let error = error {
                 print("Error calculating directions: \(error.localizedDescription)")
-                completion(0) // Return 0 in case of an error
+                completion(0)
                 return
             }
 
             guard let route = response?.routes.first else {
                 print("No route found.")
-                completion(0) // Return 0 if no route is found
+                completion(0)
                 return
             }
 
-            // Adjust expected travel time for biking
             let expectedTravelTime = route.expectedTravelTime
-            if mode == .bike {
-                completion(expectedTravelTime / 3) // Adjust travel time for biking
-            } else {
-                completion(expectedTravelTime) // Pass the estimated time for other modes
-            }
+            completion(mode == .bike ? expectedTravelTime / 3 : expectedTravelTime)
         }
     }
 
-    // Calculate distance function
-    func calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
-        let radius = 6371.0 // Earth's radius in kilometers
+    private func calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
+        let radius = 6371.0
         let lat1Rad = lat1 * .pi / 180
         let lat2Rad = lat2 * .pi / 180
         let deltaLonRad = (lon2 - lon1) * .pi / 180
 
-        let distance = acos(sin(lat1Rad) * sin(lat2Rad) + cos(lat1Rad) * cos(lat2Rad) * cos(deltaLonRad)) * radius
-        return distance
+        return acos(sin(lat1Rad) * sin(lat2Rad) + cos(lat1Rad) * cos(lat2Rad) * cos(deltaLonRad)) * radius
     }
 
-    // Format TimeInterval to human-readable format
     private func formatTime(_ time: TimeInterval) -> String {
         let hours = Int(time) / 3600
         let minutes = (Int(time) % 3600) / 60
         return "\(hours) hr \(minutes) min"
     }
 }
+
 
 // Preview for SummaryView
 struct SummaryView_Previews: PreviewProvider {
