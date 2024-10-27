@@ -19,6 +19,7 @@
 		E4E0AFE92CCD5F2100E55EC7 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E0AFE82CCD5F2100E55EC7 /* WelcomeView.swift */; };
 		E4E0AFEB2CCD5F4100E55EC7 /* FormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E0AFEA2CCD5F4100E55EC7 /* FormView.swift */; };
 		E4E0AFED2CCD5F5D00E55EC7 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E0AFEC2CCD5F5D00E55EC7 /* MapView.swift */; };
+		E4FD40AB2CCE1D26003B85F0 /* ShopsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4FD40AA2CCE1D26003B85F0 /* ShopsManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		E4E0AFE82CCD5F2100E55EC7 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
 		E4E0AFEA2CCD5F4100E55EC7 /* FormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormView.swift; sourceTree = "<group>"; };
 		E4E0AFEC2CCD5F5D00E55EC7 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		E4FD40AA2CCE1D26003B85F0 /* ShopsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopsManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 				E4DDE2602CCD818300A2975D /* ViewController.swift */,
 				E4DDE2622CCD81AD00A2975D /* stops.txt */,
 				DD852A2A2CCDC48F0044579D /* LoginView.swift */,
+				E4FD40AA2CCE1D26003B85F0 /* ShopsManager.swift */,
 			);
 			path = Intermodal;
 			sourceTree = "<group>";
@@ -169,6 +172,7 @@
 				E4DDE2672CCD86D500A2975D /* Models.swift in Sources */,
 				E4E0AFDD2CCD5E7A00E55EC7 /* ContentView.swift in Sources */,
 				E4E0AFED2CCD5F5D00E55EC7 /* MapView.swift in Sources */,
+				E4FD40AB2CCE1D26003B85F0 /* ShopsManager.swift in Sources */,
 				E4E0AFE92CCD5F2100E55EC7 /* WelcomeView.swift in Sources */,
 				E4E0AFDB2CCD5E7A00E55EC7 /* IntermodalApp.swift in Sources */,
 			);
