@@ -101,9 +101,7 @@ struct RegisterView: View {
                     .padding(.vertical, 10)
 
                     // Create Account Button
-                    Button(action: {
-                        createAccount()
-                    }) {
+                    NavigationLink(destination: LoginView()) {
                         Text("Create account")
                             .padding(.vertical, 10)
                             .frame(maxWidth: .infinity)
@@ -112,6 +110,9 @@ struct RegisterView: View {
                             .background(Color.green)
                             .cornerRadius(10)
                     }
+                    .simultaneousGesture(TapGesture().onEnded {
+                        createAccount()
+                    })
                     .padding(.horizontal, 30)
                     .padding(.vertical, 20)
 
@@ -119,7 +120,7 @@ struct RegisterView: View {
                     HStack {
                         Text("Already have an account?")
                             .foregroundColor(.white)
-                        NavigationLink(destination: FormView()) {
+                        NavigationLink(destination: LoginView()) {
                             Text("Login")
                                 .foregroundColor(.green)
                                 .bold()

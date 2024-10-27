@@ -79,6 +79,7 @@ struct FormView: View {
                     .pickerStyle(SegmentedPickerStyle())
                     .frame(width: 100)
                 }
+                .padding(.top,-25)
             }
             
             if isSearching {

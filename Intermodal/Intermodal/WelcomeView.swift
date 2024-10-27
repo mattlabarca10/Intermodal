@@ -22,10 +22,14 @@ struct WelcomeView: View {
     var body: some View {
         NavigationStack {
             VStack {
+                Image("LoginTrain")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding(.bottom, -40)
                 Text("Intermodal")
                     .font(.system(size: 45, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
-                    .padding()
+                    .padding(.top,-25)
 
                 Spacer()
                 
