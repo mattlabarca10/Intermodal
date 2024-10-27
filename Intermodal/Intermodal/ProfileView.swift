@@ -1,8 +1,6 @@
 import SwiftUI
-
 struct ProfileView: View {
     @State private var selectedSubView: Int? = 0 // Change to Int?
-
     var body: some View {
         NavigationStack {
             ZStack {
@@ -17,7 +15,6 @@ struct ProfileView: View {
                         .frame(width: 200, height: 200)
                         .foregroundColor(.white)
                         .padding(.top, 50)
-
                     HStack {
                         NavigationLink(value: 0) {
                             Image(systemName: "tram")
@@ -33,7 +30,6 @@ struct ProfileView: View {
                                     }
                                 }
                         }
-
                         NavigationLink(value: 1) {
                             Image(systemName: "gearshape.fill")
                                 .resizable()
@@ -49,7 +45,6 @@ struct ProfileView: View {
                                 }
                         }
                     }
-
                     // Moving Line
                     Rectangle()
                         .fill(Color.green)
@@ -58,21 +53,21 @@ struct ProfileView: View {
                         .animation(.easeInOut, value: selectedSubView)
                         .offset(x: selectedSubView == 0 ? -44 : 42)
                     
-                    Spacer()
-                }
-                if selectedSubView == 0 {
-                                       ProfileRoutesView()
-                                           .transition(.opacity)
-                                   } else if selectedSubView == 1 {
-                                       ProfileSettingsView()
-                                           .transition(.opacity)
-                                   }
+                    if selectedSubView == 0 {
+                                            
+                                           ProfileRoutesView()
+                                               .transition(.opacity)
+                                       } else if selectedSubView == 1 {
+                                           ProfileSettingsView()
+                                               .transition(.opacity)
+                                           Spacer()
+                                       }
+                    }
+               
                 }
             }
         }
     }
-
-
 #Preview {
     ProfileView()
 }

@@ -1,9 +1,8 @@
 import SwiftUI
-
 struct ProfileSettingsView: View {
-    @State private var email: String = ""
-    @State private var password: String = ""
-
+    @State private var email: String = "myexample@emai.com"
+    @State private var password: String = "password123"
+    
     var body: some View {
         VStack {
             // Email Field
@@ -24,7 +23,6 @@ struct ProfileSettingsView: View {
                 // Text color
             }
             .padding(.bottom, 20) // Spacing between fields
-
             // Password Field
             VStack(alignment: .leading) {
                 Text("Password")
@@ -57,7 +55,6 @@ struct ProfileSettingsView: View {
             .padding(.top,20)
             
         }
-        .padding(.top, 150)
         .padding(.horizontal, 20) // Add some horizontal padding to the VStack
     }
 }
